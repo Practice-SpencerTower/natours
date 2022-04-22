@@ -4,7 +4,8 @@ const express = require('express');
 
 const app = express();
 
-const tours = fs.readFileSync(`${__dirname}`);
+// add JSON to request
+app.use(express.json()); // middleware - adds body to *request* - need to use becuase out of the box express does not add that body data on the *request* - otherwise req.body will return *undefined*
 
 // app.get('/', (req, res) => {
 //   res.status(200).json({
@@ -22,6 +23,12 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
+// add new tour to route
+app.post('/api/v1/tours', (req, res) => {
+  console.log(req.body);
+  res.json('Post route hit.')
+})
+
 app.get('/api/v1/tours', (req, res) => {
   res.status(200).json({
     status: 'Success',
@@ -30,7 +37,6 @@ app.get('/api/v1/tours', (req, res) => {
     }
   })
 });
-
 
 
 const port = 3000;
