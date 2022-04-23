@@ -1,35 +1,14 @@
 const fs = require('fs');
-
 const express = require('express');
-
 const app = express();
 
-// add JSON to request
 app.use(express.json()); // middleware - adds body to *request* - need to use becuase out of the box express does not add that body data on the *request* - otherwise req.body will return *undefined*
 
-// app.get('/', (req, res) => {
-//   res.status(200).json({
-//     message: 'Hello from the server side!',
-//     app: 'Natours'
-//   })
-// });
-
-// app.post('/', (req, res) => {
-//   res.status(200).send('You can post to this endpoint.');
-// });
 
 // convert data to JSON object
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
-
-
-app.get('/api/v1/tours', getAllTours);       // get all tours
-app.post('/api/v1/tours', postTour);         // add new tour
-app.get('/api/v1/tours/:id', getTour);       // get tour
-app.patch('/api/v1/tours/:id', patchTour);   // patch tour
-app.delete('/api/v1/tours/:id', deleteTour); // delete tour
-
 
 const getAllTours = (req, res) => {
   res.status(200).json({
@@ -112,6 +91,23 @@ const deleteTour = (req, res) => {
   });
 };
 
+
+// app.get('/api/v1/tours', getAllTours);       // get all tours
+// app.post('/api/v1/tours', postTour);         // add new tour
+// app.get('/api/v1/tours/:id', getTour);       // get tour
+// app.patch('/api/v1/tours/:id', patchTour);   // patch tour
+// app.delete('/api/v1/tours/:id', deleteTour); // delete tour
+
+app
+  .route('/api/v1/tours')
+  .get(getAllTours)
+  .post(postTour);
+
+app
+  .route('/api/v1/tours/:id')
+  .get(getTour)
+  .patch(patchTour)
+  .delete(deleteTour);
 
 const port = 3000;
 app.listen(port, () => {
