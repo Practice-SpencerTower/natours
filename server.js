@@ -4,6 +4,15 @@ const app = express();
 
 app.use(express.json()); // middleware - adds body to *request* - need to use becuase out of the box express does not add that body data on the *request* - otherwise req.body will return *undefined*
 
+app.use((req, res, next) => {
+  console.log('Hello from the middleware');
+  next();
+});
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
 
 // convert data to JSON object
 const tours = JSON.parse(
@@ -13,6 +22,7 @@ const tours = JSON.parse(
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'Success',
+    requestTime: req.requestTime,
     data: {
       tours: tours,
     }
@@ -108,6 +118,8 @@ app
   .get(getTour)
   .patch(patchTour)
   .delete(deleteTour);
+
+
 
 const port = 3000;
 app.listen(port, () => {
