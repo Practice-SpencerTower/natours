@@ -23,8 +23,24 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-// add new tour to route
-app.post('/api/v1/tours', (req, res) => {
+
+app.get('/api/v1/tours', getAllTours);       // get all tours
+app.post('/api/v1/tours', postTour);         // add new tour
+app.get('/api/v1/tours/:id', getTour);       // get tour
+app.patch('/api/v1/tours/:id', patchTour);   // patch tour
+app.delete('/api/v1/tours/:id', deleteTour); // delete tour
+
+
+const getAllTours = (req, res) => {
+  res.status(200).json({
+    status: 'Success',
+    data: {
+      tours: tours,
+    }
+  });
+};
+
+const postTour = (req, res) => {
   console.log(req.body);
   // get last tour, get its id, add 1 to create new tour id
   const newId = tours[tours.length - 1].id + 1;
@@ -44,20 +60,9 @@ app.post('/api/v1/tours', (req, res) => {
         }
       });
     });
-});
+};
 
-// Get all tours
-app.get('/api/v1/tours', (req, res) => {
-  res.status(200).json({
-    status: 'Success',
-    data: {
-      tours: tours,
-    }
-  });
-});
-
-// Get one tour
-app.get('/api/v1/tours/:id', (req, res) => {
+const getTour = (req, res) => {
   console.log(req.params);
   // set id to req id and multiply by 1 to turn its type from string to number
   const id = req.params.id * 1;
@@ -74,25 +79,38 @@ app.get('/api/v1/tours/:id', (req, res) => {
   } else {
     res.status(404).json('Tour not found.');
   }
-});
+};
 
-app.patch('/api/v1/tours/:id', (req, res) => {
-  // check if id exists
+const patchTour = (req, res) => {
+  // check if id exists, if not send 404
   if (req.params.id * 1 > tours.length) {
     res.status(404).json({
       status: 'Fail',
       message: 'Invalid ID',
     });
-  } else {
-    res.status(200).json({
-      status: 'Success',
-      data: {
-        tour: '<Updated tour placeholder>'
-      }
+  }
+  res.status(200).json({
+    status: 'Success',
+    data: {
+      tour: '<Updated tour placeholder>'
+    }
+  });
+};
+
+
+const deleteTour = (req, res) => {
+  // check if id exists, if not send 404
+  if (req.params.id * 1 > tours.length) {
+    res.status(404).json({
+      status: 'Fail',
+      message: 'Invalid ID',
     });
   }
-});
-
+  res.status(204).json({
+    status: 'Success',
+    data: null,
+  });
+};
 
 
 const port = 3000;
