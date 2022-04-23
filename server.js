@@ -42,8 +42,8 @@ app.post('/api/v1/tours', (req, res) => {
         data: {
           tour: newTour
         }
-      })
-    })
+      });
+    });
 });
 
 // Get all tours
@@ -53,7 +53,7 @@ app.get('/api/v1/tours', (req, res) => {
     data: {
       tours: tours,
     }
-  })
+  });
 });
 
 // Get one tour
@@ -70,9 +70,26 @@ app.get('/api/v1/tours/:id', (req, res) => {
       data: {
         tour: tour,
       }
-    })
+    });
   } else {
     res.status(404).json('Tour not found.');
+  }
+});
+
+app.patch('/api/v1/tours/:id', (req, res) => {
+  // check if id exists
+  if (req.params.id * 1 > tours.length) {
+    res.status(404).json({
+      status: 'Fail',
+      message: 'Invalid ID',
+    });
+  } else {
+    res.status(200).json({
+      status: 'Success',
+      data: {
+        tour: '<Updated tour placeholder>'
+      }
+    });
   }
 });
 
