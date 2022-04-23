@@ -1,7 +1,12 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');   // logger middleware
+
 const app = express();
 
+//*********** MIDDLEWARE ***********//
+
+app.use(morgan('dev')); // argument will specify the logging format
 app.use(express.json()); // middleware - adds body to *request* - need to use becuase out of the box express does not add that body data on the *request* - otherwise req.body will return *undefined*
 
 app.use((req, res, next) => {
@@ -13,6 +18,8 @@ app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
 });
+
+//*********** ROUTE HANDLERS ***********//
 
 // convert data to JSON object
 const tours = JSON.parse(
