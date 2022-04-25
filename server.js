@@ -1,10 +1,11 @@
 const fs = require('fs');
+
 const express = require('express');
 const morgan = require('morgan');   // logger middleware
 
 const app = express();
 
-//*********** MIDDLEWARE ***********//
+/*********** MIDDLEWARE ***********/
 
 app.use(morgan('dev')); // argument will specify the logging format
 app.use(express.json()); // middleware - adds body to *request* - need to use becuase out of the box express does not add that body data on the *request* - otherwise req.body will return *undefined*
@@ -19,11 +20,19 @@ app.use((req, res, next) => {
   next();
 });
 
-//*********** ROUTE HANDLERS ***********//
+/***************************************
+ *********** ROUTE HANDLERS ************
+ ***************************************/
+
+/*********** TOUR ROUTE HANDLERS **********/
 
 // convert data to JSON object
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
+);
+
+const users = JSON.parse(
+  fs.readFileSync(`${__dirname}/dev-data/data/users.json`)
 );
 
 const getAllTours = (req, res) => {
@@ -108,6 +117,43 @@ const deleteTour = (req, res) => {
   });
 };
 
+/*********** USER ROUTE HANDLERS ***********/
+
+const getAllUsers = (req, res) => {
+  if (!users.length) {
+    res.status(404).json({
+      status: 'Fail',
+      requestTime: req.requestTime,
+    });
+  };
+
+  res.status(201).json({
+    status: 'Success',
+    requestTime: req.requestTime,
+    data: {
+      users: users,
+    }
+  });
+};
+
+const getUser = (req, res) => {
+  const id = req.params.id * 1;
+
+  for (const user of users) {
+    if (user.id === id) {
+      const userData = user;
+      res.status(201).json({
+        status: 'Success',
+        requestTime: req.requestTime,
+        data: {
+          user: userData,
+        }
+      })
+    }
+
+  }
+};
+
 
 // app.get('/api/v1/tours', getAllTours);       // get all tours
 // app.post('/api/v1/tours', postTour);         // add new tour
@@ -126,7 +172,18 @@ app
   .patch(patchTour)
   .delete(deleteTour);
 
+app.route('/api/v1/users')
+  .get(getAllUsers)
+//   .post(createUser);
 
+app.route('/api/v1/users/:id')
+  .get(getUser)
+//   .patch(patchUser)
+//   .delete(deleteUser);
+
+
+
+// app.route('/api/v1/users').get(getAllUsers);
 
 const port = 3000;
 app.listen(port, () => {
