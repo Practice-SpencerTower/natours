@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { nanoid } = require('nanoid');
 
 const express = require('express');
 const morgan = require('morgan');   // logger middleware
@@ -127,7 +128,7 @@ const getAllUsers = (req, res) => {
     });
   };
 
-  res.status(201).json({
+  res.status(200).json({
     status: 'Success',
     requestTime: req.requestTime,
     data: {
@@ -137,21 +138,45 @@ const getAllUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  const id = req.params.id * 1;
+  const id = req.params.id;
 
+  let userData;
   for (const user of users) {
-    if (user.id === id) {
-      const userData = user;
-      res.status(201).json({
+    if (user._id === id) {
+      userData = user;
+      res.status(200).json({
         status: 'Success',
         requestTime: req.requestTime,
         data: {
           user: userData,
         }
-      })
-    }
+      });
+    };
+  };
+  if (!userData) {
+    res.status(404).json({
+      status: 'Fail',
+      requestTime: req.requestTime,
+    });
+  };
+};
 
-  }
+const createUser = (req, res) => {
+  const newId = nanoid();
+  const newUser = Object.assign({ id: newId }, req.body);
+  users.push(newUser);
+
+  fs.writeFile(`${__dirname}/dev-data/data/users.json`,
+    JSON.stringify(users),
+    err => {
+      res.status(201).json({
+        status: 'Success',
+        data: {
+          user: newUser
+        }
+      });
+    }
+  );
 };
 
 
@@ -174,11 +199,11 @@ app
 
 app.route('/api/v1/users')
   .get(getAllUsers)
-//   .post(createUser);
+  .post(createUser);
 
 app.route('/api/v1/users/:id')
   .get(getUser)
-//   .patch(patchUser)
+// .patch(patchUser)
 //   .delete(deleteUser);
 
 

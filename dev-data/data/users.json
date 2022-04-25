@@ -178,5 +178,13 @@
     "active": true,
     "photo": "user-20.jpg",
     "password": "$2a$12$uA9FsDw63v6dkJKGlLQ/8ufYBs8euB7kqIQewyYlZXU5azEKeLEky"
+  },
+  {
+    "id": "37gRp7x61Gt4Ci_lwGIHy",
+    "name": "Spencer",
+    "email": "admin@natours.io",
+    "role": "admin",
+    "active": true,
+    "password": "hello134ou23420u40923"
   }
 ]
