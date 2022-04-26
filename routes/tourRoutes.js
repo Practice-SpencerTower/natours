@@ -4,15 +4,13 @@ const router = express.Router();
 
 // search for request id
 // val is for the 'id'
-router.param('id', (req, res, next, val) => {
-    console.log(`Tour id is: ${val}`);
-    next();
-});
+router.param('id', tourController.checkID);
+// .param('body', tourController.checkBody);
 
 router
     .route('/')
     .get(tourController.getAllTours)
-    .post(tourController.postTour);
+    .post(tourController.checkBody, tourController.postTour);
 
 router
     .route('/:id')
