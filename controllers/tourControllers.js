@@ -7,6 +7,17 @@ const tours = JSON.parse(
 
 /*********** TOUR ROUTE CONTROLLERS **********/
 
+exports.checkID = (req, res, next, val) => {
+    if (req.params.id * 1 > tours.length) {
+        // without return it will continue to next middleware
+        return res.status(404).json({
+            status: 'Fail',
+            message: 'Invalid ID',
+        });
+    };
+    next();
+};
+
 exports.getAllTours = (req, res) => {
     res.status(200).json({
         status: 'Success',
@@ -44,6 +55,14 @@ exports.getTour = (req, res) => {
     // set id to req id and multiply by 1 to turn its type from string to number
     const id = req.params.id * 1;
 
+    // check if id is valid
+    if (id > tours.length) {
+        res.status(404).json({
+            status: 'Error. Tour not found.',
+            message: 'Invalid ID.',
+        });
+    }
+
     // check if matching id in tours
     const tour = tours.find(elem => elem.id === id);
     if (tour) {
@@ -53,19 +72,11 @@ exports.getTour = (req, res) => {
                 tour: tour,
             }
         });
-    } else {
-        res.status(404).json('Tour not found.');
     }
 };
 
 exports.patchTour = (req, res) => {
     // check if id exists, if not send 404
-    if (req.params.id * 1 > tours.length) {
-        res.status(404).json({
-            status: 'Fail',
-            message: 'Invalid ID',
-        });
-    }
     res.status(200).json({
         status: 'Success',
         data: {
