@@ -89,3 +89,27 @@ exports.patchUser = (req, res) => {
         });
     };
 };
+
+exports.deleteUser = (req, res) => {
+    // check if id exists, if not send 404
+    const id = req.params.id;
+    let userData;
+    for (const user of users) {
+        if (user._id === id) {
+            userData = user;
+            // res.status(200).json({
+            //     status: 'Success',
+            //     requestTime: req.requestTime,
+            //     data: {
+            //         user: userData,
+            //     }
+            // });
+        };
+    };
+    if (!userData) {
+        res.status(404).json({
+            status: 'Error. User data not found.',
+            requestTime: req.requestTime,
+        });
+    };
+};
