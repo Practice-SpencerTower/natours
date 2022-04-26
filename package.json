@@ -1,0 +1,24 @@
+{
+  "name": "natours",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Practice-SpencerTower/natours.git"
+  },
+  "author": "Spencer Tower",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Practice-SpencerTower/natours/issues"
+  },
+  "homepage": "https://github.com/Practice-SpencerTower/natours#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "morgan": "^1.10.0",
+    "nanoid": "^3.3.3"
+  }
+}
