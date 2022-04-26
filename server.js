@@ -4,14 +4,12 @@ const morgan = require('morgan');   // logger middleware
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
-
 const app = express();
-
 
 /*********** MIDDLEWARE ***********/
 
 app.use(morgan('dev')); // argument will specify the logging format
-app.use(express.json()); // middleware - adds body to *request* - need to use becuase out of the box express does not add that body data on the *request* - otherwise req.body will return *undefined*
+app.use(express.json()); // middleware - adds body to *request* - out of the box express does not add body data to the request - otherwise req.body will return *undefined*
 
 app.use((req, res, next) => {
     console.log('Hello from the middleware');
@@ -23,6 +21,7 @@ app.use((req, res, next) => {
     next();
 });
 
+// Mount routers
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
