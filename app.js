@@ -1,5 +1,5 @@
 const express = require('express');
-const morgan = require('morgan');   // logger middleware
+const morgan = require('morgan'); // logger middleware
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -8,8 +8,14 @@ const app = express();
 
 /*********** MIDDLEWARE ***********/
 
-app.use(morgan('dev')); // argument will specify the logging format
+// only use logger during development
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev')); // argument will specify the logging format
+}
+
+
 app.use(express.json()); // middleware - adds body to *request* - out of the box express does not add body data to the request - otherwise req.body will return *undefined*
+app.use(express.static(`${__dirname}/public`)); // pass in directory from which to serve static files
 
 app.use((req, res, next) => {
     console.log('Hello from the middleware');

@@ -32,6 +32,7 @@ exports.checkBody = (req, res, next) => {
 };
 
 exports.getAllTours = (req, res) => {
+    console.log('Get All Tours Route Hit.');
     res.status(200).json({
         status: 'Success',
         requestTime: req.requestTime,
