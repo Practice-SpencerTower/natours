@@ -13,7 +13,28 @@ mongoose.connect(DB, {
     useCreateIndex: true,
     useFindAndModify: false
 })
-    .then(() => console.log('DB Connection Successful.'));
+    .then(() => console.log('DB Connection Successful'));
+
+
+const tourSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: [true, 'A tour must have a name'], // validator, checks if name is there
+        unique: true
+    },
+    rating: {
+        type: Number,
+        default: 4.5
+    },
+    price: {
+        type: Number,
+        required: true
+    }
+});
+
+const Tour = mongoose.model('Tour', tourSchema);
+
+const testTour = 
 
 console.log(app.get('env')); // returns environment node app is runing in
 // console.log(process.env);
