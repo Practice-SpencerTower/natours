@@ -7,18 +7,6 @@ const Tour = require('./../models/tourModel');
 
 /*********** TOUR ROUTE CONTROLLERS **********/
 
-exports.checkBody = (req, res, next) => {
-    const body = req.body;
-    // verify that body contains name and price
-    if (!body.name || !body.price) {
-        return res.status(404).json({
-            status: 'Fail',
-            message: 'No request data',
-        });
-    };
-    next();
-};
-
 exports.getAllTours = (req, res) => {
     console.log('Get All Tours Route Hit.');
     res.status(200).json({
@@ -30,25 +18,29 @@ exports.getAllTours = (req, res) => {
     });
 };
 
-exports.postTour = (req, res) => {
+exports.createTour = async (req, res) => {
     console.log(req.body);
-    // get last tour, get its id, add 1 to create new tour id
-    // const newId = tours[tours.length - 1].id + 1;
-    // combine id with new tour object
-    // const newTour = Object.assign({ id: newId }, req.body);
 
-    // tours.push(newTour);
+    try {
+        // const newTour = new Tour({});
+        // newTour.save(); // calls method on new document
 
-    // fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`,
-    //     JSON.stringify(tours),
-    //     err => {
-    //         res.status(201).json({
-    //             status: 'Success',
-    //             data: {
-    //                 tour: newTour
-    //             }
-    //         });
-    //     });
+        // Does same thing as above, but calls create method on model itself
+        // Save the result of the promise in the newTour variable
+        const newTour = await Tour.create(req.body);
+
+        res.status(201).json({
+            status: 'Success',
+            data: {
+                tour: newTour // Promise returned from Tour.create
+            }
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: 'Error',
+            message: err,
+        });
+    }
 };
 
 exports.getTour = (req, res) => {
