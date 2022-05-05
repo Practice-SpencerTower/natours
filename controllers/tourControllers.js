@@ -7,15 +7,48 @@ const Tour = require('./../models/tourModel');
 
 /*********** TOUR ROUTE CONTROLLERS **********/
 
-exports.getAllTours = (req, res) => {
+exports.getAllTours = async (req, res) => {
     console.log('Get All Tours Route Hit.');
-    res.status(200).json({
-        status: 'Success',
-        // requestTime: req.requestTime,
-        // data: {
-        //     tours: tours,
-        // }
-    });
+
+    try {
+        const tours = await Tour.find();
+
+        res.status(200).json({
+            status: 'Success',
+            requestTime: req.requestTime,
+            data: {
+                tours: tours,
+            }
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'Error',
+            message: err
+        });
+    }
+};
+
+exports.getTour = async (req, res) => {
+    console.log(req.params.id);
+    const id = req.params.id;
+
+    try {
+        const tour = await Tour.findById(id);
+        // check if matching id in tours
+        if (tour) {
+            res.status(200).json({
+                status: 'Success',
+                data: {
+                    tour: tour,
+                }
+            });
+        };
+    } catch (err) {
+        res.status(404).json({
+            status: 'Error',
+            message: err
+        });
+    }
 };
 
 exports.createTour = async (req, res) => {
@@ -41,23 +74,6 @@ exports.createTour = async (req, res) => {
             message: err,
         });
     }
-};
-
-exports.getTour = (req, res) => {
-    console.log(req.params);
-    // set id to req id and multiply by 1 to turn its type from string to number
-    const id = req.params.id * 1;
-
-    // check if matching id in tours
-    // const tour = tours.find(elem => elem.id === id);
-    // if (tour) {
-    //     res.status(200).json({
-    //         status: 'Success',
-    //         data: {
-    //             tour: tour,
-    //         }
-    //     });
-    // };
 };
 
 exports.patchTour = (req, res) => {
