@@ -11,7 +11,8 @@ const DB = process.env.DATABASE.replace(
 mongoose.connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useFindAndModify: false
+    useFindAndModify: false,
+    useUnifiedTopology: true,
 })
     .then(() => console.log('DB Connection Successful'));
 
@@ -35,10 +36,18 @@ const tourSchema = new mongoose.Schema({
 const Tour = mongoose.model('Tour', tourSchema);
 
 const testTour = new Tour({
-    name: 'The Forest Hiker',
-    rating: 4.7,
-    price: 497
+    name: '',
+    price: 997,
 });
+
+// Saves testTour to tours collection in db
+// .save() returns a promise (final document after being saved in db)- can consume with .then() and catch error if one occurs while trying to save to db
+testTour.save().then(doc => {
+    console.log('DOC: ', doc);
+}).catch(err => {
+    console.log('ERROR: ', err);
+})
+
 
 console.log(app.get('env')); // returns environment node app is runing in
 // console.log(process.env);
