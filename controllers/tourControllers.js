@@ -7,7 +7,32 @@ const tours = JSON.parse(
 
 /*********** TOUR ROUTE CONTROLLERS **********/
 
+exports.checkID = (req, res, next, val) => {
+    console.log(`Tour ID is ${val}.`);
+    if (req.params.id * 1 > tours.length) {
+        // without return it will continue to next middleware
+        return res.status(404).json({
+            status: 'Fail',
+            message: 'Invalid ID',
+        });
+    };
+    next();
+};
+
+exports.checkBody = (req, res, next) => {
+    const body = req.body;
+    // verify that body contains name and price
+    if (!body.name || !body.price) {
+        return res.status(404).json({
+            status: 'Fail',
+            message: 'No request data',
+        });
+    };
+    next();
+};
+
 exports.getAllTours = (req, res) => {
+    console.log('Get All Tours Route Hit.');
     res.status(200).json({
         status: 'Success',
         requestTime: req.requestTime,
@@ -24,9 +49,8 @@ exports.postTour = (req, res) => {
     // combine id with new tour object
     const newTour = Object.assign({ id: newId }, req.body);
 
-    console.log('TOURS BEFORE PUSH', tours);
     tours.push(newTour);
-    console.log('TOURS AFTER PUSH', tours); // add new tour object to tours array
+
     fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`,
         JSON.stringify(tours),
         err => {
@@ -53,35 +77,21 @@ exports.getTour = (req, res) => {
                 tour: tour,
             }
         });
-    } else {
-        res.status(404).json('Tour not found.');
-    }
+    };
 };
 
 exports.patchTour = (req, res) => {
     // check if id exists, if not send 404
-    if (req.params.id * 1 > tours.length) {
-        res.status(404).json({
-            status: 'Fail',
-            message: 'Invalid ID',
-        });
-    }
     res.status(200).json({
         status: 'Success',
         data: {
-            tour: '<Updated tour placeholder>'
+            tour: '<Updated tour placeholder>',
         }
     });
 };
 
 exports.deleteTour = (req, res) => {
     // check if id exists, if not send 404
-    if (req.params.id * 1 > tours.length) {
-        res.status(404).json({
-            status: 'Fail',
-            message: 'Invalid ID',
-        });
-    }
     res.status(204).json({
         status: 'Success',
         data: null,

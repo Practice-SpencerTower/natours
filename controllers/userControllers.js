@@ -1,7 +1,6 @@
 const fs = require('fs');
 const { nanoid } = require('nanoid');
 
-
 const users = JSON.parse(
     fs.readFileSync(`${__dirname}/../dev-data/data/users.json`)
 );
