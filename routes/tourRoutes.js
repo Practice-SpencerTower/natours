@@ -4,7 +4,7 @@ const router = express.Router();
 
 // search for request id
 // val is for the 'id'
-router.param('id', tourController.checkID);
+// router.param('id', tourController.checkID);
 
 router
     .route('/')
