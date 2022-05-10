@@ -34,15 +34,14 @@ exports.getTour = async (req, res) => {
 
     try {
         const tour = await Tour.findById(id);
-        // check if matching id in tours
-        if (tour) {
-            res.status(200).json({
-                status: 'Success',
-                data: {
-                    tour: tour,
-                }
-            });
-        };
+        // Same as Tour.findOne({ _id: req.params.id })
+
+        res.status(200).json({
+            status: 'Success',
+            data: {
+                tour: tour,
+            }
+        });
     } catch (err) {
         res.status(404).json({
             status: 'Error',
@@ -77,13 +76,22 @@ exports.createTour = async (req, res) => {
 };
 
 exports.patchTour = (req, res) => {
-    // check if id exists, if not send 404
-    res.status(200).json({
-        status: 'Success',
-        data: {
-            tour: '<Updated tour placeholder>',
-        }
-    });
+    try {
+        const id = req.params.id;
+        const tour = await Tour.findByIdAndUpdate(id, req.body, {new: true}); // new updated document will be the one returned in the promise
+        res.status(200).json({
+            status: 'Success',
+            data: {
+                tour: tour,
+            }
+        });
+    } catch(err) {
+        console.log(err);
+        res.status(404).json({
+            status: 'Error',
+            message: err,
+        })
+    }
 };
 
 exports.deleteTour = (req, res) => {
