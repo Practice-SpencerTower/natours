@@ -104,10 +104,12 @@ exports.deleteTour = async (req, res) => {
         console.log('DELETE', tour);
         res.status(204).json({
             status: 'Success',
-            data: {
-                deletedTour: tour,
-            }
+            data: null,
         });
     } catch (err) {
+        res.status(404).json({
+            status: 'Error',
+            message: err,
+        })
     }
 };
