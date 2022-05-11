@@ -4,12 +4,12 @@ const router = express.Router();
 
 // search for request id
 // val is for the 'id'
-router.param('id', tourController.checkID);
+// router.param('id', tourController.checkID);
 
 router
     .route('/')
     .get(tourController.getAllTours)
-    .post(tourController.checkBody, tourController.postTour);
+    .post(tourController.createTour);
 
 router
     .route('/:id')
