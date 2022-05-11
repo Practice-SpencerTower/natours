@@ -35,7 +35,6 @@ exports.getTour = async (req, res) => {
     try {
         const tour = await Tour.findById(id);
         // Same as Tour.findOne({ _id: req.params.id })
-
         res.status(200).json({
             status: 'Success',
             data: {
@@ -75,10 +74,13 @@ exports.createTour = async (req, res) => {
     }
 };
 
-exports.patchTour = (req, res) => {
+exports.patchTour = async (req, res) => {
     try {
         const id = req.params.id;
-        const tour = await Tour.findByIdAndUpdate(id, req.body, {new: true}); // new updated document will be the one returned in the promise
+        const tour = await Tour.findByIdAndUpdate(id, req.body, {
+            new: true, // new updated document will be the one returned in the promise
+            runValidators: true, // validates the update operation against the model's schema
+        }); 
         res.status(200).json({
             status: 'Success',
             data: {
@@ -94,10 +96,18 @@ exports.patchTour = (req, res) => {
     }
 };
 
-exports.deleteTour = (req, res) => {
+exports.deleteTour = async (req, res) => {
     // check if id exists, if not send 404
-    res.status(204).json({
-        status: 'Success',
-        data: null,
-    });
+    try {
+        const id = req.params.id;
+        const tour = await Tour.findByIdAndDelete(id);
+        console.log('DELETE', tour);
+        res.status(204).json({
+            status: 'Success',
+            data: {
+                deletedTour: tour,
+            }
+        });
+    } catch (err) {
+    }
 };
