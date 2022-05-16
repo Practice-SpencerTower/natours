@@ -11,8 +11,20 @@ exports.getAllTours = async (req, res) => {
     console.log('Get All Tours Route Hit.');
 
     try {
-        const tours = await Tour.find();
+        // BUILD QUERY
+        const queryObj = {...req.query};
+        const excludedFields = ['page', 'sort', 'limit', 'fields'];
+        excludedFields.forEach(el => delete queryObj[el]); // delete excluded fields
 
+        console.log(req.query, queryObj);
+
+        const query = Tour.find(queryObj);
+        
+
+        // EXECUTE QUERY
+        const tours = await query;
+
+        // SEND RESPONSE
         res.status(200).json({
             status: 'Success',
             requestTime: req.requestTime,
