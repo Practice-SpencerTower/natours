@@ -20,16 +20,21 @@ exports.getAllTours = async (req, res) => {
 
         // 2) Advanced filtering
         let queryStr = JSON.stringify(queryObj);
-        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`); // \b = exact match, /g = can have multiple instances
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`); // find parameter in query and add $ to convert to mongoose query
         console.log(JSON.parse(queryStr));
 
 
-        const query = Tour.find(queryObj);
+        let query = Tour.find(JSON.parse(queryStr));
 
-        // { difficulty: 'easy', duration: { $gte: 5 }}
 
         console.log('REQ.QUERY', req.query);
-
+        console.log('REQ QUERY TYPE: ', typeof req.query);
+        console.log('REQ QUERY SORT: ', req.query.sort)
+        // 2) Sorting
+        if (req.query.sort) {
+            query = query.sort(req.query.sort);
+            // sort('price')
+        }
 
         // EXECUTE QUERY
         const tours = await query;
