@@ -1,5 +1,5 @@
 const Tour = require('./../models/tourModel');
-const APIFeatures = require('./../utils/apiFeatures');
+const APIFeatures = require('./../routes/utils/apiFeatures');
 
 // pre-fill query string for user for alias
 exports.aliasTopCheapTours = (req, res, next) => {
@@ -14,7 +14,7 @@ exports.aliasTopCheapTours = (req, res, next) => {
 
 exports.getAllTours = async (req, res) => {
     console.log('Get All Tours Route Hit.');
-    
+
     try {
         // EXECUTE QUERY
         const features = new APIFeatures(Tour.find(), req.query)
@@ -127,3 +127,14 @@ exports.deleteTour = async (req, res) => {
         })
     }
 };
+
+exports.getTourStats = async (res, req) => {
+    try {
+        
+    } catch (err) {
+        res.status(404).json({
+            status: 'Error',
+            message: err,
+        })
+    }
+}
