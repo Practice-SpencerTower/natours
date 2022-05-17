@@ -1,5 +1,38 @@
 const Tour = require('./../models/tourModel');
 
+// pre-fill query string for user for alias
+exports.aliasTopCheapTours = (req, res, next) => {
+    req.query.limit = '5';
+    req.query.sort = '-ratingsAverage,price';
+    req.query.fileds = 'name,price,ratingsAverage,summary,difficulty';
+    next();
+};
+
+class APIFeatures {
+    constructor(query, queryString) {
+        this.query = query;
+        this.queryString = queryString;
+    }
+
+    filter() {
+        const queryObj = {...this.query};
+        const excludedFields = ['page', 'sort', 'limit', 'fields'];
+        excludedFields.forEach(el => delete queryObj[el]); // delete excluded fields
+
+
+        // 2) Advanced filtering
+        let queryStr = JSON.stringify(queryObj);
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`); // find parameter in query and add $ to convert to mongoose query
+
+        this.query.find(JSON.parse(queryStr));
+        // let query = Tour.find(JSON.parse(queryStr));
+    }
+
+    sort() {
+        
+    }
+}
+
 // convert data to JSON object
 // const tours = JSON.parse(
 //     fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
@@ -13,18 +46,18 @@ exports.getAllTours = async (req, res) => {
     try {
         // BUILD QUERY
         // 1) Filtering
-        const queryObj = {...req.query};
-        const excludedFields = ['page', 'sort', 'limit', 'fields'];
-        excludedFields.forEach(el => delete queryObj[el]); // delete excluded fields
+        // const queryObj = {...req.query};
+        // const excludedFields = ['page', 'sort', 'limit', 'fields'];
+        // excludedFields.forEach(el => delete queryObj[el]); // delete excluded fields
 
 
-        // 2) Advanced filtering
-        let queryStr = JSON.stringify(queryObj);
-        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`); // find parameter in query and add $ to convert to mongoose query
-        console.log(JSON.parse(queryStr));
+        // // 2) Advanced filtering
+        // let queryStr = JSON.stringify(queryObj);
+        // queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+        // console.log(JSON.parse(queryStr));
 
 
-        let query = Tour.find(JSON.parse(queryStr));
+        // let query = Tour.find(JSON.parse(queryStr));
 
 
         console.log('REQ.QUERY', req.query);
@@ -58,7 +91,8 @@ exports.getAllTours = async (req, res) => {
             if (skip >= numTours) throw new Error('This page does not exist.');  // throw new error will automatically trigger catch block
         }
         // EXECUTE QUERY
-        const tours = await query;
+        const features = new APIFeatures(Tour.find(), req.query).filter();
+        const tours = await features.query;
 
         // SEND RESPONSE
         res.status(200).json({
