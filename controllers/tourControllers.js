@@ -29,11 +29,21 @@ exports.getAllTours = async (req, res) => {
 
         console.log('REQ.QUERY', req.query);
         console.log('REQ QUERY TYPE: ', typeof req.query);
-        console.log('REQ QUERY SORT: ', req.query.sort)
+        console.log('REQ QUERY SORT: ', req.query.sort);
         // 2) Sorting
         if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(' '); // replace comma with space in sort query
             query = query.sort(req.query.sort);
-            // sort('price')
+        } else {
+            query = query.sort('-createdAt');
+        }
+
+        // 3) Field limiting
+        if (req.query.fields) {
+            const fields = req.query.fields.split(',').join(' '); // parse fields from query
+            query = query.select(fields); // projecting = selecting specific field names
+        } else {
+            query = query.select('-__v');
         }
 
         // EXECUTE QUERY
