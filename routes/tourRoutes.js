@@ -6,6 +6,16 @@ const router = express.Router();
 // val is for the 'id'
 // router.param('id', tourController.checkID);
 
+// Alias for top 5 cheap tours
+
+router
+    .route('/top-5-cheap')
+    .get(tourController.aliasTopCheapTours, tourController.getAllTours);
+
+router
+    .route('/tour-stats')
+    .get(tourController.getTourStats);
+
 router
     .route('/')
     .get(tourController.getAllTours)

@@ -1,9 +1,14 @@
 const Tour = require('./../models/tourModel');
+const APIFeatures = require('./../routes/utils/apiFeatures');
 
-// convert data to JSON object
-// const tours = JSON.parse(
-//     fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-// );
+// pre-fill query string for user for alias
+exports.aliasTopCheapTours = (req, res, next) => {
+    req.query.limit = '5';
+    req.query.sort = '-ratingsAverage,price';
+    req.query.fileds = 'name,price,ratingsAverage,summary,difficulty';
+    next();
+};
+
 
 /*********** TOUR ROUTE CONTROLLERS **********/
 
@@ -11,8 +16,15 @@ exports.getAllTours = async (req, res) => {
     console.log('Get All Tours Route Hit.');
 
     try {
-        const tours = await Tour.find();
+        // EXECUTE QUERY
+        const features = new APIFeatures(Tour.find(), req.query)
+            .paginate()
+            .limitFields();
+        
+        console.log('FEATURES', features);
+        const tours = await features.query;
 
+        // SEND RESPONSE
         res.status(200).json({
             status: 'Success',
             requestTime: req.requestTime,
@@ -113,3 +125,43 @@ exports.deleteTour = async (req, res) => {
         })
     }
 };
+
+exports.getTourStats = async (req, res) => {
+    try {
+        // pass in array of stages
+        const stats = await Tour.aggregate([
+            {
+                $match: { ratingsAverage: { $gte: 4.5 } },
+            },
+            {
+                $group: {
+                    _id: { $toUpper: '$difficulty' }, // changing id will filter stats
+                    numTours: { $sum: 1 },  // for each document found, 1 will be added to the numTours 'counter'
+                    numRatings: { $sum: '$ratingsQuantity' },
+                    avgRating: { $avg: '$ratingsAverage' },
+                    avgPrice: { $avg: '$price' },
+                    minPrice: { $min: '$price' },
+                    maxPrice: { $max: '$price' },
+                }
+            },
+            {
+                $sort: { avgPrice: 1 }  // 1 = ascending
+            },
+            // {
+            //     $match: { _id: { $ne: 'EASY'} } // excludes easy tours
+            // },
+        ]);
+
+        res.status(200).json({
+            status: 'Success',
+            data: {
+                stats: stats,
+            },
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'Error',
+            message: err,
+        });
+    }
+}
