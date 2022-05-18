@@ -18,10 +18,8 @@ exports.getAllTours = async (req, res) => {
     try {
         // EXECUTE QUERY
         const features = new APIFeatures(Tour.find(), req.query)
-            .filter()
-            .sort()
-            .limitFields()
-            .paginate();
+            .paginate()
+            .limitFields();
         
         console.log('FEATURES', features);
         const tours = await features.query;
@@ -128,13 +126,36 @@ exports.deleteTour = async (req, res) => {
     }
 };
 
-exports.getTourStats = async (res, req) => {
+exports.getTourStats = async (req, res) => {
     try {
-        
+        // pass in array of stages
+        const stats = await Tour.aggregate([
+            {
+                $match: { ratingsAverage: { $gte: 4.5 } },
+            },
+            {
+                $group: {
+                    _id: null,
+                    num: { $sum: 1 },  // for each document found, 1 will be added to the num 'counter'
+                    numRatings: { $sum: '$ratingsQuantity' },
+                    avgRating: { $avg: '$ratingsAverage' },
+                    avgPrice: { $avg: '$price' },
+                    minPrice: { $min: '$price' },
+                    maxPrice: { $max: '$price' },
+                }
+            },
+        ]);
+
+        res.status(200).json({
+            status: 'Success',
+            data: {
+                stats: stats,
+            },
+        });
     } catch (err) {
         res.status(404).json({
             status: 'Error',
             message: err,
-        })
+        });
     }
 }
