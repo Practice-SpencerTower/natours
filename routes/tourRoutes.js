@@ -12,9 +12,10 @@ router
     .route('/top-5-cheap')
     .get(tourController.aliasTopCheapTours, tourController.getAllTours);
 
-router
-    .route('/tour-stats')
-    .get(tourController.getTourStats);
+router.route('/tour-stats').get(tourController.getTourStats);
+
+// accepts optional year parameter
+router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
 
 router
     .route('/')
