@@ -21,7 +21,7 @@ exports.getAllTours = async (req, res) => {
             .paginate()
             .limitFields();
         
-        console.log('FEATURES', features);
+        // `console`.log('FEATURES', features);
         const tours = await features.query;
 
         // SEND RESPONSE
@@ -41,7 +41,6 @@ exports.getAllTours = async (req, res) => {
 };
 
 exports.getTour = async (req, res) => {
-    console.log(req.params.id);
     const id = req.params.id;
 
     try {
@@ -62,8 +61,6 @@ exports.getTour = async (req, res) => {
 };
 
 exports.createTour = async (req, res) => {
-    console.log(req.body);
-
     try {
         // const newTour = new Tour({});
         // newTour.save(); // calls method on new document

@@ -70,7 +70,7 @@ tourSchema.virtual('durationWeeks').get(function() {
 // DOCUMENT MIDDLEWARE
 // in save middleware, 'this' points to document that is being saved
 tourSchema.pre('save', function(next) {
-    console.log('THIS', this);
+    // console.log('THIS', this);
     this.slug = slugify(this.name, { lower: true });
     next();
 });
@@ -88,6 +88,7 @@ tourSchema.pre('save', function(next) {
 // QUERY MIDDLEWARE
 // search all strings that start with 'find'
 tourSchema.pre(/^find/, function(next) { 
+    console.log('TOURSCHEMA PRE MIDDLEWARE HIT');
     this.find({ secretTour: {$ne: true}});
 
     this.start = Date.now();
@@ -96,9 +97,15 @@ tourSchema.pre(/^find/, function(next) {
 
 tourSchema.post(/^find/, function(docs, next) {
     console.log(`Query took ${Date.now() - this.start} milliseconds`);
-    console.log(docs);
+    // console.log(docs);
     next();
-})
+});
+
+// AGGREGATION MIDDLEWARE
+tourSchema.pre('aggregate', function(next) {
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+    next();
+});
 
 const Tour = mongoose.model('Tour', tourSchema);
 
